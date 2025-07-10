@@ -8,6 +8,7 @@ using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TelegramBot
 {
@@ -93,14 +94,17 @@ namespace TelegramBot
             switch (message.Text) 
             {
                 case "/cats":
+                case "Котик 🐈":
                     randomNumbers = HelperMethods.GetRandomNubmers(MotivationMessages.Length, CatsPictures.Length);
                     await SendPhotoMessageAsync(client, message, MotivationMessages[randomNumbers.Item1], CatsPictures[randomNumbers.Item2], token);
                     break;
                 case "/dogs":
+                case "Собачка 🐶":
                     randomNumbers = HelperMethods.GetRandomNubmers(MotivationMessages.Length, CatsPictures.Length);
                     await SendPhotoMessageAsync(client, message, MotivationMessages[randomNumbers.Item1], DogsPictures[randomNumbers.Item2], token);
                     break;
                 case "/help":
+                case "Помощь 🛠️":
                     string text = $"У бота есть следующие команды:\n/cats\n/dogs";
                     await SendTextMessageAsync(client, message, text, token);
                     break;
@@ -113,11 +117,32 @@ namespace TelegramBot
             }
         }
 
+        private static ReplyKeyboardMarkup GetButtonKeyboard()
+        {
+            var keyboard = new ReplyKeyboardMarkup(new KeyboardButton[][]
+            {
+                new []
+                {
+                    new KeyboardButton("Котик 🐈")
+                },
+                new []
+                {
+                    new KeyboardButton("Собачка 🐶")
+                },
+                new []
+                {
+                    new KeyboardButton("Помощь 🛠️")
+                }
+            });
+            return keyboard;
+        }
+
         private static async Task SendTextMessageAsync(ITelegramBotClient botClient, Message message, string text, CancellationToken cancellationToken)
         {
             Message sendMessage = await botClient.SendTextMessageAsync(
                 chatId: message.Chat.Id,
-                text: text
+                text: text,
+                replyMarkup: GetButtonKeyboard()
             );
         }
 
